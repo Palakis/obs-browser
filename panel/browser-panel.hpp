@@ -80,8 +80,6 @@ static inline QCef *obs_browser_init_panel(void)
 	create_qcef = (decltype(create_qcef))obs_get_module_export(
 		browser_module, "obs_browser_create_qcef");
 	if (!create_qcef) {
-		blog(LOG_ERROR,
-		     "obs_browser_init_panel: os_dlsym failed for obs_browser_create_qcef");
 		return nullptr;
 	}
 
@@ -100,8 +98,6 @@ static inline int obs_browser_qcef_version(void)
 	qcef_version = (decltype(qcef_version))obs_get_module_export(
 		browser_module, "obs_browser_qcef_version_export");
 	if (!qcef_version) {
-		blog(LOG_ERROR,
-		     "obs_browser_qcef_version: os_dlsym failed for obs_browser_qcef_version_export");
 		return 0;
 	}
 
