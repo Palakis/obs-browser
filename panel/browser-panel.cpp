@@ -235,7 +235,7 @@ void QCefWidgetInternal::Init()
 				      size.height());
 #elif __linux
 		size *= devicePixelRatio();
-		CefRect rc(0, 0, size.width(), size.height());
+		const CefRect rc(0, 0, size.width(), size.height());
 		windowInfo.SetAsChild((CefWindowHandle)id, rc);
 #endif
 
