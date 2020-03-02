@@ -233,6 +233,10 @@ void QCefWidgetInternal::Init()
 #elif __APPLE__
 		windowInfo.SetAsChild((CefWindowHandle)id, 0, 0, size.width(),
 				      size.height());
+#elif __linux
+		size *= devicePixelRatio();
+		CefRect rc(0, 0, size.width(), size.height());
+		windowInfo.SetAsChild((CefWindowHandle)id, rc);
 #endif
 
 		CefRefPtr<QCefBrowserClient> browserClient =
