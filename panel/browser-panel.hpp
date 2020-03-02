@@ -77,7 +77,7 @@ static inline QCef *obs_browser_init_panel(void)
 		return nullptr;
 	}
 
-	create_qcef = (decltype(create_qcef))obs_get_module_export(
+	create_qcef = (decltype(create_qcef))obs_module_dlsym(
 		browser_module, "obs_browser_create_qcef");
 	if (!create_qcef) {
 		return nullptr;
@@ -95,7 +95,7 @@ static inline int obs_browser_qcef_version(void)
 		return 0;
 	}
 
-	qcef_version = (decltype(qcef_version))obs_get_module_export(
+	qcef_version = (decltype(qcef_version))obs_module_dlsym(
 		browser_module, "obs_browser_qcef_version_export");
 	if (!qcef_version) {
 		return 0;
