@@ -4,7 +4,7 @@
 #include "browser-app.hpp"
 
 #include <QWindow>
-#include <QLayout>
+#include <QStackedLayout>
 #include <QApplication>
 
 #ifdef USE_QT_LOOP
@@ -265,9 +265,10 @@ void QCefWidgetInternal::Init()
 	if (success) {
 #ifdef __linux
 		QWidget* cefWindowWidget = QWidget::createWindowContainer(embedCefWindow, this);
-		cefWindowWidget->resize(this->size());
 		if (!this->layout()) {
-			this->setLayout(new QGridLayout());
+			QLayout* layout = new QStackedLayout();
+			this->setContentsMargins(0, 0, 0, 0);
+			this->setLayout(layout);
 		}
 		this->layout()->addWidget(cefWindowWidget);
 #endif
