@@ -4,6 +4,7 @@
 #include "browser-app.hpp"
 
 #include <QWindow>
+#include <QLayout>
 #include <QApplication>
 
 #ifdef USE_QT_LOOP
@@ -216,7 +217,12 @@ void QCefWidgetInternal::closeBrowser()
 
 void QCefWidgetInternal::Init()
 {
+#if __linux
+	QWindow* embedCefWindow = new QWindow();
+	WId id = embedCefWindow->winId();
+#else
 	WId id = winId();
+#endif
 
 	bool success = QueueCEFTask([this, id]() {
 		CefWindowInfo windowInfo;
@@ -225,8 +231,8 @@ void QCefWidgetInternal::Init()
 		if (cefBrowser)
 			return;
 
-		QSize size = this->size();
 #ifdef _WIN32
+		QSize size = this->size();
 		size *= devicePixelRatio();
 		RECT rc = {0, 0, size.width(), size.height()};
 		windowInfo.SetAsChild((HWND)id, rc);
@@ -234,6 +240,7 @@ void QCefWidgetInternal::Init()
 		windowInfo.SetAsChild((CefWindowHandle)id, 0, 0, size.width(),
 				      size.height());
 #elif __linux
+		QSize size = this->size();
 		size *= devicePixelRatio();
 		const CefRect rc(0, 0, size.width(), size.height());
 		windowInfo.SetAsChild((CefWindowHandle)id, rc);
@@ -249,13 +256,23 @@ void QCefWidgetInternal::Init()
 			CefRefPtr<CefDictionaryValue>(),
 #endif
 			rqc);
+
 #ifdef _WIN32
 		Resize();
 #endif
 	});
 
-	if (success)
+	if (success) {
+#ifdef __linux
+		QWidget* cefWindowWidget = QWidget::createWindowContainer(embedCefWindow, this);
+		cefWindowWidget->resize(this->size());
+		if (!this->layout()) {
+			this->setLayout(new QGridLayout());
+		}
+		this->layout()->addWidget(cefWindowWidget);
+#endif
 		timer.stop();
+	}
 }
 
 void QCefWidgetInternal::resizeEvent(QResizeEvent *event)
